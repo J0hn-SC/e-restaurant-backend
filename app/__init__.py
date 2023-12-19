@@ -10,7 +10,7 @@ def create_app():
 
     #app.register_blueprint(main)
     CORS(app, origins=['*','http://localhost:8080/', 'http://localhost:8081/'])
-    #CORS(app)
+    CORS(app)
     #app.register_blueprint(bp)
     #socketio.init_app(app)
 

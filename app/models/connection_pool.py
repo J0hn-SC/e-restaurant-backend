@@ -6,7 +6,7 @@ dbconfig = {
     "host":"localhost",
     "port":"3306",
     "user":"root",
-    "password":"admin_1572003_jesc",
+    "password":"lu123",
     "database":"e_restaurant",
     
 }
