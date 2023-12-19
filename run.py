@@ -1,6 +1,6 @@
-from app import create_app, socketio
-from test import suite
+from app import create_app
+
 
 app = create_app()
 
-socketio.run(app)
+#socketio.run(app)
