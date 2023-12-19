@@ -1,4 +1,4 @@
-from extensions import mysql_pool
+from ..extensions import mysql_pool
 
 class MenuItem:
     def __init__(self):

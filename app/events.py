@@ -6,7 +6,7 @@ from .extensions import socketio
 #from .models.Order_Controller import OrderController
 #from .models.Order_Controller import Order
 #from .models.Frequency_Controller import FrequencyController
-##from .controllers import menu_controller
+from .controllers import menu_controller
 ##from .controllers import order_controller
 ##from .controllers import frequency_controller
 
@@ -29,10 +29,10 @@ def get_menus():
 def set_menu(menu):
     current_menu = menu_controller.set_current_menu(menu)
     print("Evento: set-menu", current_menu)
-    frequency_controller.set_items(current_menu['items'])
-    print("Frequency controller",frequency_controller.get_list_of_frequency())
+    #frequency_controller.set_items(current_menu['items'])
+    #print("Frequency controller",frequency_controller.get_list_of_frequency())
     emit('get-complete-menu',menu_controller.get_current_menu_and_items() , broadcast=True)
-    emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
+    #emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
 
 @socketio.on("enable-item")
 def enable_item(item):
@@ -50,3 +50,10 @@ def disable_item(item):
     print("active",active)
     if(not active):
         emit('set-active', False , broadcast=True)
+
+
+#Cliente
+@socketio.on("get-ready-menu")
+def get_ready_menu():
+    print("Evento: get-ready-menu")
+    emit('get-ready-menu', menu_controller.get_ready_menu(), broadcast=True)
