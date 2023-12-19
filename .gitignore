@@ -1,2 +1,3 @@
 venv
 app/models/connection_pool.py
+app/models/__pycache__
