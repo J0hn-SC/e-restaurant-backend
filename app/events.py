@@ -7,7 +7,7 @@ from .extensions import socketio
 #from .models.Order_Controller import Order
 #from .models.Frequency_Controller import FrequencyController
 from .controllers import menu_controller
-##from .controllers import order_controller
+from .controllers import order_controller
 ##from .controllers import frequency_controller
 
 #administrador
@@ -57,3 +57,29 @@ def disable_item(item):
 def get_ready_menu():
     print("Evento: get-ready-menu")
     emit('get-ready-menu', menu_controller.get_ready_menu(), broadcast=True)
+
+@socketio.on("handle-order")
+def handle_order(order):
+    print("Evento: handle-order")
+    if(menu_controller.check_order(order)):
+        #print("Antes de emit menu", menu_controller.menu)
+        #print("Antes de emit menu solo items", menu_controller.menu['items'])
+        new_order = order_controller.add_order(order)
+        #frequency_controller.add_order(order)
+        #emit('get-complete-menu',menu_controller.get_complete_menu() , broadcast=True)
+        emit('get-complete-menu', menu_controller.menu , broadcast=True)
+        emit('get-summary-order', order_controller.get_summary_order(new_order), broadcast=True)
+        emit('get-waiting-order', new_order, broadcast = True)
+        #emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
+        #tambien se deberia enviar a ordenes en espera
+        #este state a continuacion es de la respuesta, se deberia cambiar el state de respues para no
+        #confundirlo con el state de en q cola se encuetra
+        answer = {}
+        answer['state'] = 1
+        emit('answer-order', answer)
+        print("Evento: handle-order Accept")
+    else:
+        answer = {}
+        answer['state'] = 2
+        emit('answer-order', answer)
+        print("Evento: handle-order Denied")
