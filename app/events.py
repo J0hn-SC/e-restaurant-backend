@@ -83,3 +83,9 @@ def handle_order(order):
         answer['state'] = 2
         emit('answer-order', answer)
         print("Evento: handle-order Denied")
+
+#dashboard
+@socketio.on("get-summary")
+def get_summary():
+    print("Evento: get-summary")
+    emit('get-summary', order_controller.get_summary(), broadcast=True)
