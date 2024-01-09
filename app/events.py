@@ -89,3 +89,43 @@ def handle_order(order):
 def get_summary():
     print("Evento: get-summary")
     emit('get-summary', order_controller.get_summary(), broadcast=True)
+
+
+
+#orders
+@socketio.on("get-all-waiting-order")
+def get_all_waiting_order():
+    print("Evento: get-all-waiting-order")
+    emit('get-all-waiting-order', order_controller.get_all_waiting_order(), broadcast=True)
+
+@socketio.on("order-waiting-to-preparating")
+def order_waiting_to_preparating(order):
+    print("Evento: order-waiting-to-preparating")
+    order_controller.order_waiting_to_preparating(order)
+
+@socketio.on("get-all-preparating-order")
+def get_all_preparating_order():
+    print("Evento: get-all-preparating-order")
+    emit('get-all-preparating-order', order_controller.get_all_preparating_order(), broadcast=True)
+
+@socketio.on("order-preparating-to-ready")
+def order_preparating_to_ready(change_order):
+    print("Evento: order-preparating-to-ready")
+    order = order_controller.order_preparating_to_ready(change_order)
+    emit('get-ready-order', order, broadcast = True)
+
+#finished orders
+@socketio.on("get-all-ready-order")
+def get_all_ready_order():
+    print("Evento: get-all-ready-order")
+    emit('get-all-ready-order', order_controller.get_all_ready_order(), broadcast=True)
+
+@socketio.on("order-ready-to-commited")
+def order_ready_to_commited(order):
+    print("Evento: order-ready-to-commited")
+    order_controller.order_ready_to_commited(order)
+
+@socketio.on("get-all-commited-order")
+def get_all_commited_order():
+    print("Evento: get-all-commited-order")
+    emit('get-all-commited-order', order_controller.get_all_commited_order(), broadcast=True)
