@@ -8,7 +8,7 @@ from .extensions import socketio
 #from .models.Frequency_Controller import FrequencyController
 from .controllers import menu_controller
 from .controllers import order_controller
-##from .controllers import frequency_controller
+from .controllers import frequency_controller
 
 #administrador
 #MenuView
@@ -29,10 +29,10 @@ def get_menus():
 def set_menu(menu):
     current_menu = menu_controller.set_current_menu(menu)
     print("Evento: set-menu", current_menu)
-    #frequency_controller.set_items(current_menu['items'])
+    frequency_controller.set_items(current_menu['items'])
     #print("Frequency controller",frequency_controller.get_list_of_frequency())
     emit('get-complete-menu',menu_controller.get_current_menu_and_items() , broadcast=True)
-    #emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
+    emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
 
 @socketio.on("enable-item")
 def enable_item(item):
@@ -65,12 +65,12 @@ def handle_order(order):
         #print("Antes de emit menu", menu_controller.menu)
         #print("Antes de emit menu solo items", menu_controller.menu['items'])
         new_order = order_controller.add_order(order)
-        #frequency_controller.add_order(order)
+        frequency_controller.add_order(order)
         #emit('get-complete-menu',menu_controller.get_complete_menu() , broadcast=True)
         emit('get-complete-menu', menu_controller.menu , broadcast=True)
         emit('get-summary-order', order_controller.get_summary_order(new_order), broadcast=True)
         emit('get-waiting-order', new_order, broadcast = True)
-        #emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
+        emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
         #tambien se deberia enviar a ordenes en espera
         #este state a continuacion es de la respuesta, se deberia cambiar el state de respues para no
         #confundirlo con el state de en q cola se encuetra
@@ -90,7 +90,11 @@ def get_summary():
     print("Evento: get-summary")
     emit('get-summary', order_controller.get_summary(), broadcast=True)
 
-
+@socketio.on("set-frequency")
+def set_frequency():
+    print("Evento: set-frequency")
+    emit('set-frequency', frequency_controller.get_list_of_frequency(), broadcast=True)
+    print(frequency_controller.get_list_of_frequency())
 
 #orders
 @socketio.on("get-all-waiting-order")
@@ -102,6 +106,7 @@ def get_all_waiting_order():
 def order_waiting_to_preparating(order):
     print("Evento: order-waiting-to-preparating")
     order_controller.order_waiting_to_preparating(order)
+    emit("order-waiting-to-preparating", order, broadcast=True) #order = {id_order: id_order, id_table: id_table}
 
 @socketio.on("get-all-preparating-order")
 def get_all_preparating_order():
@@ -113,6 +118,7 @@ def order_preparating_to_ready(change_order):
     print("Evento: order-preparating-to-ready")
     order = order_controller.order_preparating_to_ready(change_order)
     emit('get-ready-order', order, broadcast = True)
+    emit('order-preparating-to-ready', change_order, broadcast = True)
 
 #finished orders
 @socketio.on("get-all-ready-order")
@@ -124,8 +130,24 @@ def get_all_ready_order():
 def order_ready_to_commited(order):
     print("Evento: order-ready-to-commited")
     order_controller.order_ready_to_commited(order)
+    emit("order-ready-to-commited", order, broadcast=True)
 
 @socketio.on("get-all-commited-order")
 def get_all_commited_order():
     print("Evento: get-all-commited-order")
     emit('get-all-commited-order', order_controller.get_all_commited_order(), broadcast=True)
+
+@socketio.on("order-commited-to-finished")
+def order_commited_to_commited(order):
+    print("Evento: order-commited-to-finished")
+    #order_controller.order_commited_to_commited(order)
+    emit("order-commited-to-finished", order, broadcast=True)
+    
+#checklist
+@socketio.on("get-summary-all-table")
+def get_summary_all_table():
+    emit('get-summary-all-table', order_controller.get_summary_all_table(), broadcast=True)
+
+@socketio.on("get-summary-table")
+def get_summary_table(id_table):
+    emit('get-summary-table', order_controller.get_summary_table(id_table), broadcast=True)

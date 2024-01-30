@@ -66,7 +66,7 @@ class MenuController:
 
     def check_order(self, order):
         cero_item = []
-        for order_item in order['items'].values():
+        for order_item in order['items']:
             if(order_item['amount'] > 0):
                 if(self.menu['items'][order_item['id_item']]['amount'] < order_item['amount']):
                     return False
@@ -77,7 +77,7 @@ class MenuController:
             order['items'].pop(id_item, True)
 
         #print("Menu controller: check_order entre for", order)
-        for order_item in order['items'].values():
+        for order_item in order['items']:
             if(order_item['amount'] > 0):
                 self.menu['items'][order_item['id_item']]['amount'] = self.menu['items'][order_item['id_item']]['amount'] - order_item['amount']
 
